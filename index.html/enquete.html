@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mystère au Grand Hôtel</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    color: #fff; /* Texte général blanc */
+    background-image: url('crime_scene.jpg'); /* Image de fond sombre ambiance scène de crime */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  /* Voile sombre global pour lisibilité */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)); /* dégradé sombre du haut vers le bas */
+    z-index: -1;
+  }
+
+  h1 { text-align: center; }
+
+  /* Conteneurs semi-transparents pour lisibilité */
+  #indice, #options, #historique, h4 {
+    background: rgba(0,0,0,0.7);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  }
+
+  #indice img { max-width: 100%; border-radius: 5px; display: block; margin-bottom: 15px; }
+  .option { display: block; margin: 5px 0; }
+  button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #fff; /* boutons blancs */
+    color: #000;      /* texte noir */
+  }
+  button:hover { background: #ddd; } /* léger hover pour feedback */
+  #erreurs { margin-top: 10px; font-weight: bold; color: #fff; } /* erreurs en blanc */
+</style>
+</head>
+<body>
+
+<h1>🕵️‍♂️ Mystère au Grand Hôtel</h1>
+<h3>Un client à disparu dans la nuit du 18 février 2026 au Grand Hôtel, en tant que détective privée reconnue pour sa rapidité à résoudre les affaires et sa logique à toutes épreuves. La police fait appel à tes service pour les accompagner dans l'enquête.<br>Saura-tu les aider ?🔍</h3>
+<p>Un jeu fait avec amour par moi-même🫆<p>
+
+<div id="indice"></div>
+<div id="options"></div>
+<div id="erreurs"></div>
+<div id="historique"></div>
+
+<script>
+let indices = [];
+let erreurs = 0;
+const MAX_ERREURS = 5;
+
+const suspects = ["le serveur", "le concierge", "le jardinier"];
+const coupable = suspects[Math.floor(Math.random()*suspects.length)];
+
+// Liste des étapes avec images
+const etapes = [
+  {indice: "Le client n'est jamais arrivé à sa réunion. Sa chambre est vide, mais un mot est posé sur le bureau : 'Je savais que tu viendrais.' Qui a pu le déposer ?",
+   img: "chambre.jpg",
+   options: {"A": "Le client lui-même", "B": "Un employé de l'hôtel", "C": "Un inconnu"},
+   bonne: "B"},
+  {indice: "Le serveur se rappelle que le client a reçu un appel mystérieux lorsqu'il est descendu au restaurant de l'hotel pour commander son diner à apporter dans sa chambre. Mais il n'a pas entendu la discussion, il a juste vu l'air dubitatif du client",
+   img: "telephone.jpg",
+   options: {"A": "Ce n'était rien d'intéressant pour l'enquête", "B": "Le serveur a mal interprété la scène", "C": "Il faut identifier l'appelant"},
+   bonne: "C"},
+  {indice: `Une silhouette entre par la porte de service. Selon les horaires, cela pourrait être ${suspects.join(", ")}.`,
+   img: "porte_service.jpg",
+   options: {"A": "Ignorer la silhouette, c'était surement un autre client", "B": "Examiner les horaires du personnel", "C": "Attendre le lendemain pour interroger chaque personne"},
+   bonne: "B"},
+  {indice: "La chambre du client a un accès au jardin, nous voyons des traces de pas qui mènent vers un sac lourd dissimulé, mais la sortie est condamnée.",
+   img: "jardin.jpg",
+   options: {"A": "Chercher un passage secret", "B": "Interroger le jardinier", "C": "Le sac n'a rien à voir avec l'enquête"},
+   bonne: "A"},
+  {indice: "Un témoin affirme avoir entendu des bruits suspects venant de la salle de stockage.",
+   img: "stockage.jpg",
+   options: {"A": "Chercher dans la salle de stockage", "B": "C'était un employé, laissons cette piste de côté"},
+   bonne: "A"},
+  {indice: "La clé de la suite du client est manquante dans le trousseau de la réception. Quelqu'un a pu s'introduire dans la chambre.",
+   img: "cle.jpg",
+   options: {"A": "Vérifier qui a eu accès à la clé", "B": "Interroger le concierge de l'hôtel", "C": "Demander aux voisins s'ils ont vu quelqu'un."},
+   bonne: "A"},
+  {indice: `Un autre client affirme avoir vu un homme ressemblant à l'associé du disparu entrer dans l'hôtel la nuit dernière. Il n'est pas sur de lui et avait bu au bar car il s'est disputé avec sa femme.`,
+   img: "témoin.jpg",
+   options: {"A": "C'est une coïncidence, il a pu vouloir prendre une chambre lui aussi", "B": "Interroger l'associé, il peut être un suspect", "C": "Ignorer le témoin"},
+   bonne: "B"},
+  {indice: "Nous avons retrouvé des documents dans le coffre fort de la suite qui montrent un mobile financier important lié à l'associé.",
+   img: "documents.jpg",
+   options: {"A": "Accuser immédiatement l'associé", "B": "Rassembler plus de preuves", "C": "Ne pas tenir compte des documents, nous ne savons pas s'ils sont authentiques"},
+   bonne: "B"},
+  {indice: "Vous trouvez une pièce cachée où le client pourrait être retenu, mais la porte est verrouillée.",
+   img: "piece_cachee.jpg",
+   options: {"A": "Forcer la porte, nous ne pouvons pas attendre", "B": "Chercher un autre accès, il y a peut être une issue cachée", "C": "Appeler la police, il nous faudra du renfort"},
+   bonne: "B"},
+  {indice: `Après avoir pénétré dans la pièce cachée, vous retrouvez le client sain et sauf. Le coupable est là, mais qui est-il ?`,
+   img: "client.jpg",
+   options: {"A": "Le jardinier, qui se serait introduit par le jardin", "B": "L'associé, ayant des conflits financier avec la victime", "C": "Le serveur, qui a apporter le diner en chambre", "D": "Le. concierge, qui a accès aux clés"},
+   bonne: "B"}
+];
+
+let etapeActuelle = 0;
+
+function afficherEtape() {
+  if (etapeActuelle >= etapes.length) {
+    if(erreurs >= MAX_ERREURS) finPiege();
+    else if(erreurs <= 2 && indices.length >= 9) finParfaite();
+    else finNormale();
+    return;
+  }
+
+  const etape = etapes[etapeActuelle];
+  document.getElementById("indice").innerHTML = `
+    ${etape.img ? `<img src="${etape.img}" alt="Image indice"><br>` : ""}
+    <strong>Indice :</strong> ${etape.indice}
+  `;
+  
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  for (let key in etape.options) {
+    const btn = document.createElement("button");
+    btn.textContent = `${key}: ${etape.options[key]}`;
+    btn.classList.add("option");
+    btn.onclick = () => verifierReponse(key);
+    optionsDiv.appendChild(btn);
+  }
+
+  document.getElementById("erreurs").innerHTML = `Erreurs : ${erreurs}/${MAX_ERREURS}`;
+  afficherHistorique();
+}
+
+function verifierReponse(choix) {
+  const etape = etapes[etapeActuelle];
+  if (choix === etape.bonne) {
+    alert("✅ Bonne réponse ! Indice débloqué.");
+    indices.push(etape.indice);
+    etapeActuelle++;
+    afficherEtape();
+  } else {
+    erreurs++;
+    alert(`❌ Mauvaise réponse ! Erreurs : ${erreurs}/${MAX_ERREURS}`);
+    if(erreurs >= MAX_ERREURS) finPiege();
+    else afficherEtape();
+  }
+}
+
+function afficherHistorique() {
+  const histDiv = document.getElementById("historique");
+  if(indices.length === 0) {
+    histDiv.innerHTML = "<strong>Historique des indices :</strong> Aucun pour l'instant.";
+  } else {
+    histDiv.innerHTML = "<strong>Historique des indices :</strong><ul>" +
+      indices.map(i => `<li>${i}</li>`).join("") +
+      "</ul>";
+  }
+}
+
+function finParfaite() {
+  alert(`🎉 FIN PARFAITE 🎉\nFélicitation, tous les indices ont été trouvés et le coupable, l'associé, a été arrêté rapidement. Grâce à vous le client va bien, il va pouvoir rentrer chez lui auprès de sa famille👫 Vous avez été une super détective🕵️‍♀️`);
+  document.getElementById("indice").innerHTML = "🎉 Vous avez résolu le mystère avec brio ! 🎉";
+  document.getElementById("options").innerHTML = "";
+}
+
+function finNormale() {
+  alert(`⚖️ FIN NORMALE ⚖️\nLe client est sain et sauf, mais certaines preuves manquent. Le coupable, l'associé, n'est pas complètement exposé. Vous devrez être plus vigilant lors de votre prochaine enquête🧐`);
+  document.getElementById("indice").innerHTML = "⚖️ L'enquête est résolue, mais pas parfaitement.";
+  document.getElementById("options").innerHTML = "";
+}
+
+function finPiege() {
+  alert(`💀 FIN PIÈGE 💀\nTrop d'erreurs ont été commises. L'enquête est compromise, le client reste introuvable ou le coupable s'est échappé. L'enquête est transmise à un autre enquêteur... Nous espérons faire appel à vous une prochaine fois👩‍✈️`);
+  document.getElementById("indice").innerHTML = "💀 L'enquête est compromise ! 💀";
+  document.getElementById("options").innerHTML = "";
+}
+
+afficherEtape();
+</script>
+
+</body>
+</html>
