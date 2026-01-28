@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From Bestie 🌼</title>
+  <style>
+    body {
+      font-family: "Poppins", system-ui, sans-serif;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+      background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    h1, p {
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner {
+      width: 100%;
+      height: auto;
+      overflow: hidden;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      display: block;
+    }
+
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      max-width: 800px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 30px;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(0,0,0,.15);
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    .locked {
+      background: rgba(240,240,240,0.9);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .content {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .left-text {
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    img, video {
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      margin-top: 15px;
+      display: block;
+    }
+
+    .devinette-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 15px;
+        font-size: 14px;
+      }
+
+      .left-text {
+        font-size: 14px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="banner">
+  <img src="banner.jpg" alt="Bannière" />
+</div>
+
+<h1>Des petits mots pour un petit boost ✨</h1>
+<p>"Ne regrette pas le passé, n'anticipe pas le futur, vis le présent intensément."</p>
+<p>Et quand on marche, on marche 👣</p>
+
+<div class="messages-list" id="calendar"></div>
+
+<p>Les prochains messages sont en préparation 👩‍💻</p>
+
+<script>
+const messages = [
+  // -------------------- Tous tes messages initiaux --------------------
+  {
+    date: "2026-01-04",
+    title: "You're back🚜",
+    text: `Retour à la ferme 👩‍🌾<br><br>
+Pour te donner plein de courage<br>
+De force et d'énergie pour la reprise 🫶<br>
+Même si c'est dur, pense à ce que ça va te permettre de faire ✈️<br><br>
+Pour occuper le temps voici une liste d'occupation :
+<div class="left-text">
+🎧 Podcasts narratifs / histoire :<br>
+- Transfert<br>
+- Affaires Sensibles<br>
+- Podcast documentaire<br><br>
+🎧 Podcasts savoir / curiosité :<br>
+- Choses à Savoir<br>
+- Stuff You Should Know<br>
+- France Culture – séries<br><br>
+💭 Réflexion :<br>
+- Inventer un projet (même irréaliste)<br>
+- Écrire mentalement une lettre à quelqu’un<br>
+- Imaginer une autre fin à un film ou livre<br>
+- Créer une histoire (personnage, problème, résolution)<br><br>
+T'es la best, love you 🩷
+</div>`,
+    images: ["IMG FERME.jpg"],
+    videos: []
+  },
+  {
+    date: "2026-01-05",
+    title: "📸 back",
+    blocks: [
+      { type: "text", content: "2026 is the new 2026 ✨<br><br>On était déjà dans des champs, donc c'est comme toi aujourd'hui 🌾" },
+      { type: "image", content: "2016 1.jpg" },
+      { type: "text", content: "On était déjà à la piscine, ok c'est pas comme aujourd'hui 👩‍🌾👩‍💻" },
+      { type: "image", content: "2016 2.jpg" },
+      { type: "text", content: "On était en manteau, donc c'est comme moi aujourd'hui 🥶" },
+      { type: "image", content: "2016 3.jpg" },
+      { type: "text", content: "On s'aimait déjà, donc c'est comme nous aujourd'hui 🫂<br>Oui la honte....🤯" }
+    ],
+    videos: ["Vidéo 2016.mp4"]
+  },
+  {
+    date: "2026-01-06",
+    title: "Stay focus🧘‍♀️",
+    blocks: [
+      { type: "text", content: `Si tu en a marre des podcasts🚜<br><br>
+Voici d'autre source d'occupation :<br>
+- Inventer un projet (même irréaliste)<br><br>
+- Écrire mentalement une lettre à quelqu’un<br>
+(ca peut être à moi hein💁🏼‍♀️)<br><br>
+- Imaginer une autre fin à un film ou livre<br>
+(Réinvente la femme de ménage et je veux ta version finale🧹)<br><br>
+- Créer une histoire (personnage, problème, résolution)<br>
+(Hate de te lire 📖)<br><br>
+Stay strong 🩷` },
+      { type: "image", content: "LIREMAG.jpg" }
+    ],
+    videos: []
+  },
+  {
+    date: "2026-01-08",
+    title: "M+1",
+    text: `J'ai 25 ans + 1 mois 🎂<br><br>
+Je me suis dit que c'était important de noter que mon anniversaire était déjà il y a si longtemps 🕺`,
+    images: ["fev16.jpg"],
+    videos: []
+  },
+  {
+    date: "2026-01-09",
+    title: "Vision👀",
+    text: `Et je ne parlerai pas de ta vue🤓<br><br>
+Comme c'est important de se souvenir de pourquoi tu es si loin🌏<br>
+Voici un "VisionBoard" de ton année 2026✨<br>
+Je me suis permise de m'incruster un peu aussi👀<br><br>
+J'espère qu'il te plait 🫶 `,
+    images: ["Visionboard.jpg"],
+    videos: []
+  },
+  {
+    date: "2026-01-10",
+    title: "Enquête 🔎",
+    blocks: [
+      { type: "text", content: `<p>Prête à résoudre l'enquête ?🕵️‍♀️<br><br>⬇️Clique ici ⬇️</p>
+      <a href="enquete.html" target="_blank">Résoudre l'enquête</a>` }
+    ],
+    images: [],
+    videos: []
+  },
+  {
+    date: "2026-01-11",
+    title: "Enigme🧠",
+    text: `JOUR 1 (elle s'étale sur 5 jours, bon courage 🙃)<br><br>
+“Note bien ce message.<br>
+Chaque détail compte.”`,
+    images: [],
+    videos: []
+  },
+  {
+    date: "2026-01-12",
+    title: "Enigme🧠",
+    text: `JOUR 2<br><br>
+“Relis le message d’hier.<br>
+Observe ce qui est identique.”`,
+    images: [],
+    videos: []
+  },
+  {
+    date: "2026-01-13",
+    title: "Enigme🧠",
+    text: `JOUR 3<br><br>
+“Ce n’est pas ce que tu lis qui est important.<br>
+C’est ce que tu fais en le lisant.”`,
+    images: [],
+    videos: []
+  },
+  {
+    date: "2026-01-14",
+    title: "Enigme🧠",
+    text: `JOUR 4<br><br>
+“Si tu es arrivée jusque-là,<br>
+c’est que tu fais exactement ce qu’il faut.”`,
+    images: [],
+    videos: []
+  },
+  {
+    date: "2026-01-15",
+    title: "Enigme🧠",
+    text: `JOUR 5<br><br>
+L’énigme consistait simplement à :<br>
+lire les messages jusqu’au bout.<br><br>
+Bravo👏`,
+    images: [],
+    videos: []
+  },
+
+  // -------------------- Tous les jeux et devinettes --------------------
+  {
+    date: "2026-01-17",
+    title: "Jeu🧩",
+    blocks: [
+      {
+        type: "text",
+        content: `
+        <div class="left-text devinette" data-answer="le futur, futur" data-hint="Il est toujours devant toi ⏳" onclick="event.stopPropagation()">
+          <p><strong>🧠 Devinette du jour</strong></p>
+          <p>Je suis toujours devant toi,<br>mais tu ne peux jamais m’attraper.<br><br>Qui suis-je ?</p>
+          <input class="devinette-input" placeholder="Ta réponse ici..." onclick="event.stopPropagation()"/>
+          <br><br>
+          <button onclick="checkDevinette(this, event)">Valider</button>
+          <p class="devinette-result"></p>
+          <img src="futur.jpg" class="devinette-success" style="display:none;">
+        </div>`
+      }
+    ],
+    images: [],
+    videos: []
+  },
+
+  {
+    date: "2026-01-20",
+    title: "Jeu 🧩",
+    blocks: [
+      {
+        type: "text",
+        content: `
+        <div class="left-text devinette" data-answer="le silence, silence" data-hint="Il parle sans bouche, c'est pas notre truc🤐" onclick="event.stopPropagation()">
+          <p><strong>🧠 Devinette du jour</strong></p>
+          <p>Je parle sans bouche,<br>et j’entends sans oreilles.<br><br>Qui suis-je ?</p>
+          <input class="devinette-input" placeholder="Ta réponse ici..." onclick="event.stopPropagation()"/>
+          <br><br>
+          <button onclick="checkDevinette(this, event)">Valider</button>
+          <p class="devinette-result"></p>
+          <img src="silence.jpg" class="devinette-success" style="display:none;">
+        </div>`
+      }
+    ],
+    images: [],
+    videos: []
+  },
+
+  {
+    date: "2026-01-21",
+    title: "Jeu 🧩",
+    blocks: [
+      {
+        type: "text",
+        content: `
+        <div class="left-text devinette" data-answer="une ombre, ombre, mon ombre, ton ombre" data-hint="Elle te suit partout 🌑" onclick="event.stopPropagation()">
+          <p><strong>🧠 Devinette du jour</strong></p>
+          <p>Je te suis mais je ne te rattrape jamais.<br><br>Qui suis-je ?</p>
+          <input class="devinette-input" placeholder="Ta réponse ici..." onclick="event.stopPropagation()"/>
+          <br><br>
+          <button onclick="checkDevinette(this, event)">Valider</button>
+          <p class="devinette-result"></p>
+          <img src="ombre.jpg" class="devinette-success" style="display:none; margin-top:15px;">
+        </div>`
+      }
+    ],
+    images: [],
+    videos: []
+  },
+
+  {
+    date: "2026-01-22",
+    title: "Jeu 🧩",
+    blocks: [
+      {
+        type: "text",
+        content: `
+        <div class="left-text devinette" data-answer="l'âge, âge, age, l'age" data-hint="J'en ai un peu plus que toi, Clément et Nolan en ont moins" onclick="event.stopPropagation()">
+          <p><strong>🧠 Devinette du jour</strong></p>
+          <p>Qu’est-ce qui augmente toujours et ne baisse jamais ?</p>
+          <input class="devinette-input" placeholder="Ta réponse ici..." onclick="event.stopPropagation()"/>
+          <br><br>
+          <button onclick="checkDevinette(this, event)">Valider</button>
+          <p class="devinette-result"></p>
+          <img src="age.jpg" class="devinette-success" style="display:none; margin-top:15px;">
+        </div>`
+      }
+    ],
+    images: [],
+    videos: []
+  },
+
+  {
+    date: "2026-01-23",
+    title: "Jeu 🧩",
+    blocks: [
+      {
+        type: "text",
+        content: `
+        <div class="left-text devinette" data-answer="et, Et" data-hint="C'est plus simple que ce que tu cherches🔍" onclick="event.stopPropagation()">
+          <p><strong>🧠 Devinette du jour</strong></p>
+          <p>Qu’est-ce qu’il y a entre terre et mer ?</p>
+          <input class="devinette-input" placeholder="Ta réponse ici..." onclick="event.stopPropagation()"/>
+          <br><br>
+          <button onclick="checkDevinette(this, event)">Valider</button>
+          <p class="devinette-result"></p>
+          <img src="terremer.jpg" class="devinette-success" style="display:none; margin-top:15px;">
+        </div>`
+      }
+    ],
+    images: [],
+    videos: []
+  },
+
+  {
+    date: "2026-01-24",
+    title: "Jeu 🧩",
+    blocks: [
+      {
+        type: "text",
+        content: `
+        <div class="left-text devinette" data-answer="oiseau, Oiseau" data-hint="C'est un animal🐾" onclick="event.stopPropagation()">
+          <p><strong>🧠 Devinette du jour</strong></p>
+          <p>Quel mot a 6 lettres dont 5 voyelles ?</p>
+          <input class="devinette-input" placeholder="Ta réponse ici..." onclick="event.stopPropagation()"/>
+          <br><br>
+          <button onclick="checkDevinette(this, event)">Valider</button>
+          <p class="devinette-result"></p>
+          <img src="oiseau.jpg" class="devinette-success" style="display:none; margin-top:15px;">
+        </div>`
+      }
+    ],
+    images: [],
+    videos: []
+  }
+];
+
+const today = new Date().setHours(0,0,0,0);
+const container = document.getElementById("calendar");
+
+messages.forEach(msg => {
+  const openDate = new Date(msg.date).setHours(0,0,0,0);
+  const card = document.createElement("div");
+  card.className = "card";
+
+  if (today < openDate) {
+    card.classList.add("locked");
+    card.innerHTML = `<h3>${msg.title}</h3><p>🔒 Trop tôt</p>`;
+  } else {
+    let html = "";
+
+    if (msg.blocks) {
+      msg.blocks.forEach(b => {
+        if (b.type === "text") html += `<div class="left-text">${b.content}</div>`;
+        if (b.type === "image") html += `<img src="${b.content}">`;
+      });
+    } else {
+      html += `<p>${msg.text}</p>`;
+      if (msg.images) html += msg.images.map(i => `<img src="${i}">`).join("");
+    }
+
+    if (msg.videos) {
+      html += msg.videos.map(v => `<video controls><source src="${v}" type="video/mp4"></video>`).join("");
+    }
+
+    card.innerHTML = `<h3>${msg.title}</h3><p>🎉 Cliquez pour ouvrir</p><div class="content">${html}</div>`;
+    card.onclick = () => {
+      const c = card.querySelector(".content");
+      c.style.display = c.style.display === "block" ? "none" : "block";
+    };
+  }
+
+  container.appendChild(card);
+});
+
+function checkDevinette(btn, event) {
+  event.stopPropagation();
+  const box = btn.closest(".devinette");
+  const input = box.querySelector(".devinette-input");
+  const result = box.querySelector(".devinette-result");
+
+  const answers = box.dataset.answer
+    .toLowerCase()
+    .split(",")
+    .map(a => a.trim());
+  const hint = box.dataset.hint;
+
+  if (!box.attempts) box.attempts = 0;
+  box.attempts++;
+
+  const value = input.value.toLowerCase().trim();
+
+  if (answers.includes(value)) {
+    result.innerHTML = `🎉 Bravo ! Bonne réponse 😏`;
+    result.style.color = "green";
+    input.disabled = true;
+    btn.disabled = true;
+
+   
+
+    const img = box.querySelector(".devinette-success");
+    if (img) img.style.display = "block";
+
+  } else {
+    let message = `❌ Raté 😈 Essai ${box.attempts}/5`;
+
+    if (box.attempts >= 3) {
+      message += `<br>Indice : ${hint}`;
+    }
+
+    result.innerHTML = message;
+    result.style.color = "crimson";
+  }
+}
+</script>
+
+
+</body>
+</html>
